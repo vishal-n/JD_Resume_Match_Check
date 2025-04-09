@@ -15,7 +15,7 @@ def extract_text_from_pdf(pdf_file):
         return " ".join(page.extract_text() for page in pdf.pages if page.extract_text())
 
 
-def extract_top_skills(pdf_file):
+def extract_top_skills_required(pdf_file):
     job_description = extract_text_from_pdf(pdf_file)
     if not job_description:
         raise ValueError("No text extracted from the PDF.")
@@ -29,7 +29,6 @@ def extract_top_skills(pdf_file):
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
-            # {"role": "system", "content": "You are a helpful assistant skilled in extracting information."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=150,
@@ -39,3 +38,28 @@ def extract_top_skills(pdf_file):
     skills_text = response.choices[0].message.content.strip()
     skills = [skill.strip() for skill in skills_text.split(",")][:5]
     return skills
+
+
+def extract_top_skills_of_candidate(pdf_file):
+    candidate_skillset = extract_text_from_pdf(pdf_file)
+    if not candidate_skillset:
+        raise ValueError("No text extracted from the PDF.")
+    
+    prompt = f"""
+    Extract the top 5 technical and soft skills from the following candidate skillset.
+    Only return the skills as a comma-separated list:
+    {candidate_skillset}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=150,
+        temperature=0.3,
+    )
+
+    top_five_skills_of_candidate = response.choices[0].message.content.strip()
+    candidate_skills = [skill.strip() for skill in top_five_skills_of_candidate.split(",")][:5]
+    return candidate_skills
