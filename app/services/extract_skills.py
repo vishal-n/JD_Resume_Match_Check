@@ -2,6 +2,7 @@
 
 import os
 import pdfplumber
+from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -63,3 +64,16 @@ def extract_top_skills_of_candidate(pdf_file):
     top_five_skills_of_candidate = response.choices[0].message.content.strip()
     candidate_skills = [skill.strip() for skill in top_five_skills_of_candidate.split(",")][:5]
     return candidate_skills
+
+
+def calculate_skill_match_score(required_skills: list[str], candidate_skills: list[str]) -> float:
+    required_skills_set = set(required_skills)
+    candidate_skills_set = set(candidate_skills)
+
+    # intersection = required_skills_set.intersection(candidate_skills_set)
+    # match_percentage = len(intersection) / len(required_skills_set) * 100
+    # return match_percentage
+
+    matched_skills = required_skills_set & candidate_skills_set
+    score = (len(matched_skills) / len(required_skills_set)) * 100 if required_skills_set else 0
+    return score 
