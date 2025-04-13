@@ -76,4 +76,4 @@ def calculate_skill_match_score(required_skills: list[str], candidate_skills: li
 
     matched_skills = required_skills_set & candidate_skills_set
     score = (len(matched_skills) / len(required_skills_set)) * 100 if required_skills_set else 0
-    return score 
+    return score
